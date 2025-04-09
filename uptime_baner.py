@@ -10,7 +10,6 @@ import winreg
 
 APP_NAME = "UptimeWidget"
 
-
 # === Шлях до директорії, де лежить exe або py-файл ===
 BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
