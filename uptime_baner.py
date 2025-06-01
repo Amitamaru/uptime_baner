@@ -10,10 +10,7 @@ import winreg
 
 APP_NAME = "UptimeWidget"
 
-# === Шлях до директорії, де лежить exe або py-файл ===
-BASE_DIR = os.path.dirname(
-    sys.executable if getattr(sys, "frozen", False) else os.path.abspath(__file__)
-)
+BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 
 # Конфіг за замовчуванням
@@ -21,10 +18,66 @@ config = {
     "topmost": True,
     "dark_theme": True,
     "autostart": False,
-    "fixed_position": False,  # 🆕 Фіксація положення
-    "window_position": "+100+100",  # 🆕 Позиція вікна
+    "fixed_position": False,
+    "window_position": "+100+100",
+    "language": "en"  # 🆕 дефолт — англійська
 }
 
+# === Локалізація ===
+translations = {
+    "uk": {
+        "always_on_top": "Завжди поверх вікон",
+        "dark_theme": "Темна тема",
+        "autostart": "Автозапуск з Windows",
+        "fixed_position": "Фіксувати положення",
+        "reset": "Скинути налаштування",
+        "exit": "Вийти",
+        "language": "Мова",
+        "lang_uk": "Українська",
+        "lang_en": "Англійська",
+        "lang_ru": "Російська",
+        "year": "рік(и)",
+        "day": "дн",
+        "hour": "год",
+        "minute": "хв"
+    },
+    "en": {
+        "always_on_top": "Always on top",
+        "dark_theme": "Dark theme",
+        "autostart": "Autostart with Windows",
+        "fixed_position": "Lock position",
+        "reset": "Reset settings",
+        "exit": "Exit",
+        "language": "Language",
+        "lang_uk": "Ukrainian",
+        "lang_en": "English",
+        "lang_ru": "Russian",
+        "year": "year(s)",
+        "day": "d",
+        "hour": "h",
+        "minute": "min"
+    },
+    "ru": {
+        "always_on_top": "Всегда поверх окон",
+        "dark_theme": "Тёмная тема",
+        "autostart": "Автозапуск с Windows",
+        "fixed_position": "Зафиксировать положение",
+        "reset": "Сбросить настройки",
+        "exit": "Выход",
+        "language": "Язык",
+        "lang_uk": "Украинский",
+        "lang_en": "Английский",
+        "lang_ru": "Русский",
+        "year": "год(а/лет)",
+        "day": "дн",
+        "hour": "ч",
+        "minute": "мин"
+    }
+}
+
+def t(key):
+    lang = config.get("language", "uk")
+    return translations.get(lang, translations["uk"]).get(key, key)
 
 def load_config():
     global config
@@ -32,33 +85,22 @@ def load_config():
         with open(CONFIG_FILE, "r") as f:
             try:
                 loaded_config = json.load(f)
-
-                # 🛠 Автовиправлення формату window_position
                 wp = loaded_config.get("window_position")
                 if isinstance(wp, dict) and "x" in wp and "y" in wp:
                     loaded_config["window_position"] = f"+{wp['x']}+{wp['y']}"
-
                 config.update(loaded_config)
             except Exception as e:
                 print(f"Помилка завантаження конфігурації: {e}")
-
 
 def save_config():
     with open(CONFIG_FILE, "w") as f:
         json.dump(config, f)
 
-
-# Автозапуск
 def set_autostart(enabled):
-    exe_path = (
-        sys.executable if getattr(sys, "frozen", False) else os.path.abspath(__file__)
-    )
-    key = winreg.OpenKey(
-        winreg.HKEY_CURRENT_USER,
-        r"Software\Microsoft\Windows\CurrentVersion\Run",
-        0,
-        winreg.KEY_SET_VALUE,
-    )
+    exe_path = sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                         r"Software\Microsoft\Windows\CurrentVersion\Run",
+                         0, winreg.KEY_SET_VALUE)
     if enabled:
         winreg.SetValueEx(key, APP_NAME, 0, winreg.REG_SZ, exe_path)
     else:
@@ -68,34 +110,37 @@ def set_autostart(enabled):
             pass
     key.Close()
 
-
 def get_uptime():
     boot_time = datetime.fromtimestamp(psutil.boot_time())
     uptime = datetime.now() - boot_time
     total_seconds = int(uptime.total_seconds())
 
+    year = t("year")
+    day = t("day")
+    hour = t("hour")
+    minute = t("minute")
+
     if total_seconds >= 365 * 24 * 3600:
         years = total_seconds // (365 * 24 * 3600)
-        total_seconds %= 365 * 24 * 3600
+        total_seconds %= (365 * 24 * 3600)
         days = total_seconds // (24 * 3600)
-        total_seconds %= 24 * 3600
+        total_seconds %= (24 * 3600)
         hours = total_seconds // 3600
         total_seconds %= 3600
         minutes = total_seconds // 60
-        return f"🕒 {years} рік(и) {days} дн {hours} год {minutes} хв"
+        return f"🕒 {years} {year} {days} {day} {hours} {hour} {minutes} {minute}"
     elif total_seconds >= 24 * 3600:
         days = total_seconds // (24 * 3600)
-        total_seconds %= 24 * 3600
+        total_seconds %= (24 * 3600)
         hours = total_seconds // 3600
         total_seconds %= 3600
         minutes = total_seconds // 60
-        return f"🕒 {days} дн {hours} год {minutes} хв"
+        return f"🕒 {days} {day} {hours} {hour} {minutes} {minute}"
     else:
         hours = total_seconds // 3600
         total_seconds %= 3600
         minutes = total_seconds // 60
-        return f"🕒 {hours} год {minutes} хв"
-
+        return f"🕒 {hours} {hour} {minutes} {minute}"
 
 def update_label():
     while True:
@@ -103,13 +148,11 @@ def update_label():
         label.config(text=uptime)
         time.sleep(60)
 
-
 def apply_theme():
     bg = "#222" if config["dark_theme"] else "#f0f0f0"
     fg = "white" if config["dark_theme"] else "black"
     label.config(bg=bg, fg=fg)
     root.config(bg=bg)
-
 
 # === Функції меню ===
 def toggle_topmost():
@@ -118,13 +161,11 @@ def toggle_topmost():
     save_config()
     update_menu()
 
-
 def toggle_theme():
     config["dark_theme"] = not config["dark_theme"]
     apply_theme()
     save_config()
     update_menu()
-
 
 def toggle_autostart():
     config["autostart"] = not config["autostart"]
@@ -132,15 +173,11 @@ def toggle_autostart():
     save_config()
     update_menu()
 
-
-# 🆕 Фіксація позиції
 def toggle_fixed_position():
     config["fixed_position"] = not config["fixed_position"]
     save_config()
     update_menu()
 
-
-# 🆕 Скидання до дефолтних значень
 def reset_to_defaults():
     global config
     config = {
@@ -149,6 +186,7 @@ def reset_to_defaults():
         "autostart": False,
         "fixed_position": False,
         "window_position": "+100+100",
+        "language": "en"
     }
     save_config()
     apply_theme()
@@ -156,42 +194,51 @@ def reset_to_defaults():
     root.geometry(config["window_position"])
     set_autostart(config["autostart"])
     update_menu()
+    refresh_uptime_label()
 
+def refresh_uptime_label():
+    uptime = get_uptime()
+    label.config(text=uptime)
+
+def set_language(lang_code):
+    config["language"] = lang_code
+    save_config()
+    update_menu()
+    refresh_uptime_label()  # 🆕 одразу оновлюємо label
 
 def update_menu():
-    menu.entryconfig(0, label=f"Завжди поверх вікон {'✔' if config['topmost'] else ''}")
-    menu.entryconfig(1, label=f"Темна тема {'✔' if config['dark_theme'] else ''}")
-    menu.entryconfig(
-        2, label=f"Автозапуск з Windows {'✔' if config['autostart'] else ''}"
-    )
-    menu.entryconfig(
-        3, label=f"Фіксувати положення {'✔' if config['fixed_position'] else ''}"
-    )
-
+    menu.entryconfig(0, label=f"{t('always_on_top')} {'✔' if config['topmost'] else ''}")
+    menu.entryconfig(1, label=f"{t('dark_theme')} {'✔' if config['dark_theme'] else ''}")
+    menu.entryconfig(2, label=f"{t('autostart')} {'✔' if config['autostart'] else ''}")
+    menu.entryconfig(3, label=f"{t('fixed_position')} {'✔' if config['fixed_position'] else ''}")
+    lang_menu.entryconfig(0, label=t("lang_uk"))
+    lang_menu.entryconfig(1, label=t("lang_en"))
+    lang_menu.entryconfig(2, label=t("lang_ru"))
+    menu.entryconfig(5, label=t("reset"))
+    menu.entryconfig(6, label=t("exit"))
+    menu.entryconfig(4, label=t("language"))
 
 # === GUI ===
 load_config()
-set_autostart(config["autostart"])  # синхронізація
+set_autostart(config["autostart"])
 
 root = tk.Tk()
 root.title("Uptime Widget")
 root.overrideredirect(True)
 root.attributes("-topmost", config["topmost"])
 root.attributes("-alpha", 0.9)
-root.geometry(config.get("window_position", "+100+100"))  # 🆕 Початкове положення
+root.geometry(config.get("window_position", "+100+100"))
 
 label = tk.Label(root, text="", font=("Segoe UI", 14), padx=10, pady=5)
 label.pack()
 
 apply_theme()
 
-
 def start_move(event):
     if config.get("fixed_position"):
         return
     root.x = event.x
     root.y = event.y
-
 
 def do_move(event):
     if config.get("fixed_position"):
@@ -200,9 +247,8 @@ def do_move(event):
     y = root.winfo_pointery() - root.y
     geometry = f"+{x}+{y}"
     root.geometry(geometry)
-    config["window_position"] = geometry  # зберігаємо як рядок!
+    config["window_position"] = geometry
     save_config()
-
 
 label.bind("<ButtonPress-1>", start_move)
 label.bind("<B1-Motion>", do_move)
@@ -211,16 +257,20 @@ menu = tk.Menu(root, tearoff=0)
 menu.add_command(label="", command=toggle_topmost)
 menu.add_command(label="", command=toggle_theme)
 menu.add_command(label="", command=toggle_autostart)
-menu.add_command(label="", command=toggle_fixed_position)  # 🆕
-menu.add_separator()
-menu.add_command(label="Скинути налаштування", command=reset_to_defaults)  # 🆕
-menu.add_command(label="Вийти", command=root.destroy)
+menu.add_command(label="", command=toggle_fixed_position)
 
+lang_menu = tk.Menu(menu, tearoff=0)
+lang_menu.add_command(label="", command=lambda: set_language("uk"))
+lang_menu.add_command(label="", command=lambda: set_language("en"))
+lang_menu.add_command(label="", command=lambda: set_language("ru"))
+menu.add_cascade(label="", menu=lang_menu)
+
+menu.add_command(label="", command=reset_to_defaults)
+menu.add_command(label="", command=root.destroy)
 
 def show_menu(event):
     update_menu()
     menu.tk_popup(event.x_root, event.y_root)
-
 
 label.bind("<Button-3>", show_menu)
 
