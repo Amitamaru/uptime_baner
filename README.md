@@ -41,7 +41,7 @@ All settings are stored in a local `config.json` file in the same directory:
 
 ## 🛠 How to Create `.exe` (Windows)
 
-Base current version, version is create in "dist" folder, and you can use it
+Base current version is created in "dist" folder, and you can use it
 
 To convert the Python script into a `.exe` file, use PyInstaller:
 
