@@ -96,6 +96,7 @@ def save_config():
     with open(CONFIG_FILE, "w") as f:
         json.dump(config, f, indent=2)
 
+
 def set_autostart(enabled):
     exe_path = sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
     key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
