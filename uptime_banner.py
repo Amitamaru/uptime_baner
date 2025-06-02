@@ -34,9 +34,11 @@ config = {
 with open(os.path.join(BASE_DIR, "locales.json"), "r", encoding="utf-8") as f:
     translations = json.load(f)
 
+
 def t(key):
     lang = config.get("language", "en")
     return translations.get(lang, translations["en"]).get(key, key)
+
 
 def load_config():
     global config
@@ -51,9 +53,11 @@ def load_config():
             except Exception as e:
                 print(f"Помилка завантаження конфігурації: {e}")
 
+
 def save_config():
     with open(CONFIG_FILE, "w") as f:
         json.dump(config, f, indent=2)
+
 
 def set_autostart(enabled):
     if platform.system() != "Windows":
@@ -74,6 +78,7 @@ def set_autostart(enabled):
         except FileNotFoundError:
             pass
     key.Close()
+
 
 def get_uptime():
     boot_time = datetime.fromtimestamp(psutil.boot_time())
@@ -107,17 +112,20 @@ def get_uptime():
         minutes = total_seconds // 60
         return f"\U0001F552 {hours} {hour} {minutes} {minute}"
 
+
 def update_label():
     while True:
         uptime = get_uptime()
         label.config(text=uptime)
         time.sleep(60)
 
+
 def apply_theme():
     bg = "#222" if config["dark_theme"] else "#f0f0f0"
     fg = "white" if config["dark_theme"] else "black"
     label.config(bg=bg, fg=fg)
     root.config(bg=bg)
+
 
 # === Menu functions ===
 def toggle_topmost():
@@ -126,11 +134,13 @@ def toggle_topmost():
     save_config()
     update_menu()
 
+
 def toggle_theme():
     config["dark_theme"] = not config["dark_theme"]
     apply_theme()
     save_config()
     update_menu()
+
 
 def toggle_autostart():
     config["autostart"] = not config["autostart"]
@@ -138,10 +148,12 @@ def toggle_autostart():
     save_config()
     update_menu()
 
+
 def toggle_fixed_position():
     config["fixed_position"] = not config["fixed_position"]
     save_config()
     update_menu()
+
 
 def reset_to_defaults():
     global config
@@ -161,15 +173,18 @@ def reset_to_defaults():
     update_menu()
     refresh_uptime_label()
 
+
 def refresh_uptime_label():
     uptime = get_uptime()
     label.config(text=uptime)
+
 
 def set_language(lang_code):
     config["language"] = lang_code
     save_config()
     update_menu()
     refresh_uptime_label()
+
 
 def safe_exit():
     try:
@@ -179,6 +194,7 @@ def safe_exit():
     except Exception as e:
         print(f"Error during cleanup: {e}")
     root.destroy()
+
 
 def update_menu():
     menu.entryconfig(0, label=f"{t('always_on_top')} {'✔' if config['topmost'] else ''}")
@@ -197,6 +213,7 @@ def update_menu():
     menu.entryconfig(6, label=t("exit"))
     menu.entryconfig(4, label=t("language"))
 
+
 # === GUI ===
 load_config()
 set_autostart(config["autostart"])
@@ -213,11 +230,13 @@ label.pack()
 
 apply_theme()
 
+
 def start_move(event):
     if config.get("fixed_position"):
         return
     root.x = event.x
     root.y = event.y
+
 
 def do_move(event):
     if config.get("fixed_position"):
@@ -228,6 +247,7 @@ def do_move(event):
     root.geometry(geometry)
     config["window_position"] = geometry
     save_config()
+
 
 label.bind("<ButtonPress-1>", start_move)
 label.bind("<B1-Motion>", do_move)
@@ -250,6 +270,7 @@ menu.add_cascade(label=t("language"), menu=lang_menu)
 menu.add_command(label=t("reset"), command=reset_to_defaults)
 menu.add_command(label=t("exit"), command=safe_exit)
 
+
 def show_menu(event):
     if not str(menu) or not menu.winfo_exists():
         return
@@ -263,6 +284,7 @@ def show_menu(event):
             menu.grab_release()
         except tk.TclError:
             pass
+
 
 if platform.system() == "Darwin":
     label.bind("<Button-2>", show_menu)
