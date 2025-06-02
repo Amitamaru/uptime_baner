@@ -287,7 +287,7 @@ menu.add_command(label=t("dark_theme"), command=toggle_theme)
 if platform.system() == "Windows":
     menu.add_command(label=t("autostart"), command=toggle_autostart)
 else:
-    menu.add_command(label="", command=None, state='disabled')  # або взагалі не додавай
+    menu.add_command(label=t("autostart"), command=None, state='disabled')  # або взагалі не додавай
 menu.add_command(label=t("fixed_position"), command=toggle_fixed_position)
 
 lang_menu = tk.Menu(menu, tearoff=0)
