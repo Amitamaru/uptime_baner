@@ -20,7 +20,7 @@ config = {
     "autostart": False,
     "fixed_position": False,
     "window_position": "+100+100",
-    "language": "en"  # 🆕 default - english
+    "language": "en"
 }
 
 # === Localization ===
@@ -102,12 +102,10 @@ def set_autostart(enabled):
         return
 
     import winreg
-    import sys
-    import os
 
     exe_path = sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
     key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                         r"Software\Microsoft\Windows\CurrentVersion\Run",
+                         r"Software\\Microsoft\\Windows\\CurrentVersion\\Run",
                          0, winreg.KEY_SET_VALUE)
     if enabled:
         winreg.SetValueEx(key, APP_NAME, 0, winreg.REG_SZ, exe_path)
@@ -117,7 +115,6 @@ def set_autostart(enabled):
         except FileNotFoundError:
             pass
     key.Close()
-
 
 def get_uptime():
     boot_time = datetime.fromtimestamp(psutil.boot_time())
@@ -137,19 +134,19 @@ def get_uptime():
         hours = total_seconds // 3600
         total_seconds %= 3600
         minutes = total_seconds // 60
-        return f"🕒 {years} {year} {days} {day} {hours} {hour} {minutes} {minute}"
+        return f"\U0001F552 {years} {year} {days} {day} {hours} {hour} {minutes} {minute}"
     elif total_seconds >= 24 * 3600:
         days = total_seconds // (24 * 3600)
         total_seconds %= (24 * 3600)
         hours = total_seconds // 3600
         total_seconds %= 3600
         minutes = total_seconds // 60
-        return f"🕒 {days} {day} {hours} {hour} {minutes} {minute}"
+        return f"\U0001F552 {days} {day} {hours} {hour} {minutes} {minute}"
     else:
         hours = total_seconds // 3600
         total_seconds %= 3600
         minutes = total_seconds // 60
-        return f"🕒 {hours} {hour} {minutes} {minute}"
+        return f"\U0001F552 {hours} {hour} {minutes} {minute}"
 
 def update_label():
     while True:
@@ -163,7 +160,7 @@ def apply_theme():
     label.config(bg=bg, fg=fg)
     root.config(bg=bg)
 
-# === Menu functions===
+# === Menu functions ===
 def toggle_topmost():
     config["topmost"] = not config["topmost"]
     root.attributes("-topmost", config["topmost"])
@@ -213,20 +210,15 @@ def set_language(lang_code):
     config["language"] = lang_code
     save_config()
     update_menu()
-    refresh_uptime_label()  # 🆕 refresh label immediately
+    refresh_uptime_label()
 
 def safe_exit():
     try:
-        # Optional: unbind menu to prevent further popup after window destroyed
         label.unbind("<Button-3>")
         label.unbind("<Button-2>")
-
-        # Optional: destroy the menu explicitly
         menu.destroy()
     except Exception as e:
         print(f"Error during cleanup: {e}")
-
-    # Finally destroy the main window
     root.destroy()
 
 def update_menu():
@@ -237,7 +229,7 @@ def update_menu():
         menu.entryconfig(2, state='normal')
     else:
         menu.entryconfig(2, label=t('autostart'))
-        menu.entryconfig(2, state='disabled')  # або можна взагалі приховати, якщо хочеш
+        menu.entryconfig(2, state='disabled')
     menu.entryconfig(3, label=f"{t('fixed_position')} {'✔' if config['fixed_position'] else ''}")
     lang_menu.entryconfig(0, label=t("lang_uk"))
     lang_menu.entryconfig(1, label=t("lang_en"))
@@ -287,7 +279,7 @@ menu.add_command(label=t("dark_theme"), command=toggle_theme)
 if platform.system() == "Windows":
     menu.add_command(label=t("autostart"), command=toggle_autostart)
 else:
-    menu.add_command(label=t("autostart"), command=None, state='disabled')  # або взагалі не додавай
+    menu.add_command(label=t("autostart"), command=None, state='disabled')
 menu.add_command(label=t("fixed_position"), command=toggle_fixed_position)
 
 lang_menu = tk.Menu(menu, tearoff=0)
@@ -300,10 +292,8 @@ menu.add_command(label=t("reset"), command=reset_to_defaults)
 menu.add_command(label=t("exit"), command=safe_exit)
 
 def show_menu(event):
-    # Prevent popup if menu or window already destroyed
     if not str(menu) or not menu.winfo_exists():
         return
-
     update_menu()
     try:
         menu.tk_popup(event.x_root, event.y_root)
@@ -311,13 +301,13 @@ def show_menu(event):
         pass
     finally:
         try:
-            menu.grab_release()  # Important for macOS
+            menu.grab_release()
         except tk.TclError:
             pass
 
 if platform.system() == "Darwin":
-    label.bind("<Button-2>", show_menu)  # sometimes works like right mouse click
-    label.bind("<Button-3>", show_menu)  # better have both
+    label.bind("<Button-2>", show_menu)
+    label.bind("<Button-3>", show_menu)
 else:
     label.bind("<Button-3>", show_menu)
 
