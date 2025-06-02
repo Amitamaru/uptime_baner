@@ -12,7 +12,13 @@ APP_NAME = "Uptime_Banner"
 
 BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
-LOCALE_FILE = os.path.join(BASE_DIR, "locales.json")
+
+if getattr(sys, 'frozen', False):
+    BASE_DIR = sys._MEIPASS  # тимчасовий каталог PyInstaller
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+LOCALES_FILE = os.path.join(BASE_DIR, "locales.json")
 
 # default config
 config = {
