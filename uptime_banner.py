@@ -12,6 +12,7 @@ APP_NAME = "Uptime_Banner"
 
 BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
+LOCALE_FILE = os.path.join(BASE_DIR, "locales.json")
 
 # default config
 config = {
@@ -24,60 +25,12 @@ config = {
 }
 
 # === Localization ===
-translations = {
-    "uk": {
-        "always_on_top": "Завжди поверх вікон",
-        "dark_theme": "Темна тема",
-        "autostart": "Автозапуск з ОС",
-        "fixed_position": "Фіксувати положення",
-        "reset": "Скинути налаштування",
-        "exit": "Вийти",
-        "language": "Мова",
-        "lang_uk": "Українська",
-        "lang_en": "Англійська",
-        "lang_ru": "Російська",
-        "year": "рік(и)",
-        "day": "дн",
-        "hour": "год",
-        "minute": "хв"
-    },
-    "en": {
-        "always_on_top": "Always on top",
-        "dark_theme": "Dark theme",
-        "autostart": "Autostart with OS",
-        "fixed_position": "Lock position",
-        "reset": "Reset settings",
-        "exit": "Exit",
-        "language": "Language",
-        "lang_uk": "Ukrainian",
-        "lang_en": "English",
-        "lang_ru": "Russian",
-        "year": "year(s)",
-        "day": "d",
-        "hour": "h",
-        "minute": "min"
-    },
-    "ru": {
-        "always_on_top": "Всегда поверх окон",
-        "dark_theme": "Тёмная тема",
-        "autostart": "Автозапуск с ОС",
-        "fixed_position": "Зафиксировать положение",
-        "reset": "Сбросить настройки",
-        "exit": "Выход",
-        "language": "Язык",
-        "lang_uk": "Украинский",
-        "lang_en": "Английский",
-        "lang_ru": "Русский",
-        "year": "год(а/лет)",
-        "day": "дн",
-        "hour": "ч",
-        "minute": "мин"
-    }
-}
+with open(os.path.join(BASE_DIR, "locales.json"), "r", encoding="utf-8") as f:
+    translations = json.load(f)
 
 def t(key):
-    lang = config.get("language", "uk")
-    return translations.get(lang, translations["uk"]).get(key, key)
+    lang = config.get("language", "en")
+    return translations.get(lang, translations["en"]).get(key, key)
 
 def load_config():
     global config
