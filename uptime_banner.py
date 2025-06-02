@@ -20,6 +20,7 @@ else:
 
 LOCALES_FILE = os.path.join(BASE_DIR, "locales.json")
 
+
 # default config
 config = {
     "topmost": True,
