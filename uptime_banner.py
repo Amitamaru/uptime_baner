@@ -232,7 +232,12 @@ def safe_exit():
 def update_menu():
     menu.entryconfig(0, label=f"{t('always_on_top')} {'✔' if config['topmost'] else ''}")
     menu.entryconfig(1, label=f"{t('dark_theme')} {'✔' if config['dark_theme'] else ''}")
-    menu.entryconfig(2, label=f"{t('autostart')} {'✔' if config['autostart'] else ''}")
+    if platform.system() == "Windows":
+        menu.entryconfig(2, label=f"{t('autostart')} {'✔' if config['autostart'] else ''}")
+        menu.entryconfig(2, state='normal')
+    else:
+        menu.entryconfig(2, label=t('autostart'))
+        menu.entryconfig(2, state='disabled')  # або можна взагалі приховати, якщо хочеш
     menu.entryconfig(3, label=f"{t('fixed_position')} {'✔' if config['fixed_position'] else ''}")
     lang_menu.entryconfig(0, label=t("lang_uk"))
     lang_menu.entryconfig(1, label=t("lang_en"))
@@ -279,7 +284,10 @@ label.bind("<B1-Motion>", do_move)
 menu = tk.Menu(root, tearoff=0)
 menu.add_command(label=t("always_on_top"), command=toggle_topmost)
 menu.add_command(label=t("dark_theme"), command=toggle_theme)
-menu.add_command(label=t("autostart"), command=toggle_autostart)
+if platform.system() == "Windows":
+    menu.add_command(label=t("autostart"), command=toggle_autostart)
+else:
+    menu.add_command(label="", command=None, state='disabled')  # або взагалі не додавай
 menu.add_command(label=t("fixed_position"), command=toggle_fixed_position)
 
 lang_menu = tk.Menu(menu, tearoff=0)
