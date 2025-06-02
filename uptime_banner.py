@@ -6,29 +6,29 @@ import threading
 import json
 import os
 import sys
-import winreg
+import platform
 
-APP_NAME = "UptimeWidget"
+APP_NAME = "Uptime_Banner"
 
 BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 
-# Конфіг за замовчуванням
+# default config
 config = {
     "topmost": True,
     "dark_theme": True,
     "autostart": False,
     "fixed_position": False,
     "window_position": "+100+100",
-    "language": "en"  # 🆕 дефолт — англійська
+    "language": "en"  # 🆕 default - english
 }
 
-# === Локалізація ===
+# === Localization ===
 translations = {
     "uk": {
         "always_on_top": "Завжди поверх вікон",
         "dark_theme": "Темна тема",
-        "autostart": "Автозапуск з Windows",
+        "autostart": "Автозапуск з ОС",
         "fixed_position": "Фіксувати положення",
         "reset": "Скинути налаштування",
         "exit": "Вийти",
@@ -44,7 +44,7 @@ translations = {
     "en": {
         "always_on_top": "Always on top",
         "dark_theme": "Dark theme",
-        "autostart": "Autostart with Windows",
+        "autostart": "Autostart with OS",
         "fixed_position": "Lock position",
         "reset": "Reset settings",
         "exit": "Exit",
@@ -60,7 +60,7 @@ translations = {
     "ru": {
         "always_on_top": "Всегда поверх окон",
         "dark_theme": "Тёмная тема",
-        "autostart": "Автозапуск с Windows",
+        "autostart": "Автозапуск с ОС",
         "fixed_position": "Зафиксировать положение",
         "reset": "Сбросить настройки",
         "exit": "Выход",
@@ -97,6 +97,14 @@ def save_config():
         json.dump(config, f, indent=2)
 
 def set_autostart(enabled):
+    if platform.system() != "Windows":
+        print("Autostart does not work on this OS.")
+        return
+
+    import winreg
+    import sys
+    import os
+
     exe_path = sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__)
     key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                          r"Software\Microsoft\Windows\CurrentVersion\Run",
@@ -109,6 +117,7 @@ def set_autostart(enabled):
         except FileNotFoundError:
             pass
     key.Close()
+
 
 def get_uptime():
     boot_time = datetime.fromtimestamp(psutil.boot_time())
@@ -154,7 +163,7 @@ def apply_theme():
     label.config(bg=bg, fg=fg)
     root.config(bg=bg)
 
-# === Функції меню ===
+# === Menu functions===
 def toggle_topmost():
     config["topmost"] = not config["topmost"]
     root.attributes("-topmost", config["topmost"])
@@ -204,7 +213,21 @@ def set_language(lang_code):
     config["language"] = lang_code
     save_config()
     update_menu()
-    refresh_uptime_label()  # 🆕 одразу оновлюємо label
+    refresh_uptime_label()  # 🆕 refresh label immediately
+
+def safe_exit():
+    try:
+        # Optional: unbind menu to prevent further popup after window destroyed
+        label.unbind("<Button-3>")
+        label.unbind("<Button-2>")
+
+        # Optional: destroy the menu explicitly
+        menu.destroy()
+    except Exception as e:
+        print(f"Error during cleanup: {e}")
+
+    # Finally destroy the main window
+    root.destroy()
 
 def update_menu():
     menu.entryconfig(0, label=f"{t('always_on_top')} {'✔' if config['topmost'] else ''}")
@@ -254,25 +277,41 @@ label.bind("<ButtonPress-1>", start_move)
 label.bind("<B1-Motion>", do_move)
 
 menu = tk.Menu(root, tearoff=0)
-menu.add_command(label="", command=toggle_topmost)
-menu.add_command(label="", command=toggle_theme)
-menu.add_command(label="", command=toggle_autostart)
-menu.add_command(label="", command=toggle_fixed_position)
+menu.add_command(label=t("always_on_top"), command=toggle_topmost)
+menu.add_command(label=t("dark_theme"), command=toggle_theme)
+menu.add_command(label=t("autostart"), command=toggle_autostart)
+menu.add_command(label=t("fixed_position"), command=toggle_fixed_position)
 
 lang_menu = tk.Menu(menu, tearoff=0)
-lang_menu.add_command(label="", command=lambda: set_language("uk"))
-lang_menu.add_command(label="", command=lambda: set_language("en"))
-lang_menu.add_command(label="", command=lambda: set_language("ru"))
-menu.add_cascade(label="", menu=lang_menu)
+lang_menu.add_command(label=t("lang_uk"), command=lambda: set_language("uk"))
+lang_menu.add_command(label=t("lang_en"), command=lambda: set_language("en"))
+lang_menu.add_command(label=t("lang_ru"), command=lambda: set_language("ru"))
+menu.add_cascade(label=t("language"), menu=lang_menu)
 
-menu.add_command(label="", command=reset_to_defaults)
-menu.add_command(label="", command=root.destroy)
+menu.add_command(label=t("reset"), command=reset_to_defaults)
+menu.add_command(label=t("exit"), command=safe_exit)
 
 def show_menu(event):
-    update_menu()
-    menu.tk_popup(event.x_root, event.y_root)
+    # Prevent popup if menu or window already destroyed
+    if not str(menu) or not menu.winfo_exists():
+        return
 
-label.bind("<Button-3>", show_menu)
+    update_menu()
+    try:
+        menu.tk_popup(event.x_root, event.y_root)
+    except tk.TclError:
+        pass
+    finally:
+        try:
+            menu.grab_release()  # Important for macOS
+        except tk.TclError:
+            pass
+
+if platform.system() == "Darwin":
+    label.bind("<Button-2>", show_menu)  # sometimes works like right mouse click
+    label.bind("<Button-3>", show_menu)  # better have both
+else:
+    label.bind("<Button-3>", show_menu)
 
 threading.Thread(target=update_label, daemon=True).start()
 
