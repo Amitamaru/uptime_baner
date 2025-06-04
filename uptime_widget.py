@@ -9,14 +9,14 @@ import sys
 import platform
 import webbrowser
 
-APP_NAME = "Uptime_Banner"
+APP_NAME = "uptime_widget"
 APP_VERSION = "1.3.1"
 
 BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
 
 if getattr(sys, 'frozen', False):
-    BASE_DIR = sys._MEIPASS  # тимчасовий каталог PyInstaller
+    BASE_DIR = sys._MEIPASS
 else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

@@ -1,6 +1,6 @@
 from setuptools import setup
 
-APP = ['uptime_banner.py']
+APP = ['uptime_widget.py']
 DATA_FILES = [('resources', ['config.json'])]  # змінено структуру
 OPTIONS = {
     'argv_emulation': True,
