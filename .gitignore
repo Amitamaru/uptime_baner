@@ -66,6 +66,7 @@ dmypy.json
 *.sublime-workspace
 .vscode/
 config.json
+build.py
 
 # Jupyter Notebook
 .ipynb_checkpoints
