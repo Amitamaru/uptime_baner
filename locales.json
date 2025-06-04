@@ -14,9 +14,9 @@
     "day": "дн",
     "hour": "год",
     "minute": "хв",
-    "version": "Версфя",
+    "version": "Версія",
     "github_page": "\uD83D\uDD17 Сторінка Github",
-    "donate_page": "\uD83D\uDC96 Підтримати розробника"
+    "support_developer": "\uD83D\uDC96 Підтримати розробника"
   },
   "en": {
     "always_on_top": "Always on top",
@@ -33,9 +33,9 @@
     "day": "d",
     "hour": "h",
     "minute": "min",
-    "version": "",
+    "version": "Version",
     "github_page": "\uD83D\uDD17 Github page",
-    "donate_page": "\uD83D\uDC96 Support developer"
+    "support_developer": "\uD83D\uDC96 Support developer"
   },
   "ru": {
     "always_on_top": "Всегда поверх окон",
@@ -54,6 +54,6 @@
     "minute": "мин",
     "version": "Версия",
     "github_page": "\uD83D\uDD17 Страница Github",
-    "donate_page": "\uD83D\uDC96 Поддержать разработчика"
+    "support_developer": "\uD83D\uDC96 Поддержать разработчика"
   }
 }

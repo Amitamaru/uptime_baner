@@ -207,13 +207,8 @@ def safe_exit():
 
 links = load_links()
 
-def open_donation_link():
-    url = links.get("donate")
-    if url:
-        webbrowser.open(url)
-
-def open_github_link():
-    url = links.get("github")
+def open_link(key):
+    url = links.get(key)
     if url:
         webbrowser.open(url)
 
@@ -227,12 +222,15 @@ def update_menu():
         menu.entryconfig(2, label=t('autostart'))
         menu.entryconfig(2, state='disabled')
     menu.entryconfig(3, label=f"{t('fixed_position')} {'✔' if config['fixed_position'] else ''}")
+    menu.entryconfig(4, label=t("language"))
     lang_menu.entryconfig(0, label=t("lang_uk"))
     lang_menu.entryconfig(1, label=t("lang_en"))
     lang_menu.entryconfig(2, label=t("lang_ru"))
     menu.entryconfig(5, label=t("reset"))
-    menu.entryconfig(6, label=t("exit"))
-    menu.entryconfig(4, label=t("language"))
+    menu.entryconfig(7, label=t("github_page"))
+    menu.entryconfig(8, label=t("support_developer"))
+    menu.entryconfig(10, label=t("exit"))
+    menu.entryconfig(12, label=f"{t('version')} {APP_VERSION}")
 
 
 # === GUI ===
@@ -287,9 +285,14 @@ lang_menu.add_command(label=t("lang_uk"), command=lambda: set_language("uk"))
 lang_menu.add_command(label=t("lang_en"), command=lambda: set_language("en"))
 lang_menu.add_command(label=t("lang_ru"), command=lambda: set_language("ru"))
 menu.add_cascade(label=t("language"), menu=lang_menu)
-
 menu.add_command(label=t("reset"), command=reset_to_defaults)
+menu.add_separator()
+menu.add_command(label=t("github_page"), command=lambda: open_link("github"))
+menu.add_command(label=t("support_developer"), command=lambda: open_link("donate"))
+menu.add_separator()
 menu.add_command(label=t("exit"), command=safe_exit)
+menu.add_separator()
+menu.add_command(label=f"{t('version')} {APP_VERSION}", state="disabled")
 
 
 def show_menu(event):
