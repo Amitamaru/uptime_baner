@@ -32,14 +32,23 @@ config = {
     "language": "en"
 }
 
+def resource_path(filename):
+    """
+    Get absolute path to resource (works for dev and for PyInstaller .exe)
+    """
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, filename)
+    return os.path.join(os.path.abspath("."), filename)
+
+
 # === Localization ===
-with open(os.path.join(BASE_DIR, "locales.json"), "r", encoding="utf-8") as f:
+with open(resource_path("locales.json"), "r", encoding="utf-8") as f:
     translations = json.load(f)
 
 # === Links ===
-def load_links(path="links.json"):
+def load_links():
     try:
-        with open(path, "r", encoding="utf-8") as file:
+        with open(resource_path("links.json"), "r", encoding="utf-8") as file:
             return json.load(file)
     except Exception as e:
         print(f"[!] Failed to load links: {e}")
