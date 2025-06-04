@@ -38,9 +38,6 @@ All settings are stored in a local `config.json` file in the same directory:
   "language": "uk"
 }
 ```
-### 💖 Support the Developer
-
-You can support development by choosing "Support Developer" in the right-click context menu. It opens a donation link in your browser.
 
 
 ## 🛠 How to Create `.exe` (Windows)
@@ -125,3 +122,7 @@ This enables automatic launch on user login.
 
 Developed by Dmytro for personal use and to learn Python GUI development.  
 Contributions welcome 😉
+
+### 💖 Support the Developer
+
+You can support development by choosing "Support Developer" in the right-click context menu. It opens a donation link in your browser.
