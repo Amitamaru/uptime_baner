@@ -37,7 +37,7 @@ It will open a donation page in your browser.
 
 🌐 GitHub (source code & updates):
 ----------------------------------
-https://github.com/yourname/uptime-widget
+https://github.com/Amitamaru/uptime_baner
 
 🧠 AUTHOR:
 ----------
