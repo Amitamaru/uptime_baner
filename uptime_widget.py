@@ -45,7 +45,7 @@ def load_links(path="links.json"):
         print(f"[!] Failed to load links: {e}")
         return {}
 
-def t(key):
+def lang_text(key):
     lang = config.get("language", "en")
     return translations.get(lang, translations["en"]).get(key, key)
 
@@ -61,7 +61,7 @@ def load_config():
                     loaded_config["window_position"] = f"+{wp['x']}+{wp['y']}"
                 config.update(loaded_config)
             except Exception as e:
-                print(f"Помилка завантаження конфігурації: {e}")
+                print(f"Configuration load error: {e}")
 
 
 def save_config():
@@ -95,10 +95,10 @@ def get_uptime():
     uptime = datetime.now() - boot_time
     total_seconds = int(uptime.total_seconds())
 
-    year = t("year")
-    day = t("day")
-    hour = t("hour")
-    minute = t("minute")
+    year = lang_text("year")
+    day = lang_text("day")
+    hour = lang_text("hour")
+    minute = lang_text("minute")
 
     if total_seconds >= 365 * 24 * 3600:
         years = total_seconds // (365 * 24 * 3600)
@@ -213,24 +213,24 @@ def open_link(key):
         webbrowser.open(url)
 
 def update_menu():
-    menu.entryconfig(0, label=f"{t('always_on_top')} {'✔' if config['topmost'] else ''}")
-    menu.entryconfig(1, label=f"{t('dark_theme')} {'✔' if config['dark_theme'] else ''}")
+    menu.entryconfig(0, label=f"{lang_text('always_on_top')} {'✔' if config['topmost'] else ''}")
+    menu.entryconfig(1, label=f"{lang_text('dark_theme')} {'✔' if config['dark_theme'] else ''}")
     if platform.system() == "Windows":
-        menu.entryconfig(2, label=f"{t('autostart')} {'✔' if config['autostart'] else ''}")
+        menu.entryconfig(2, label=f"{lang_text('autostart')} {'✔' if config['autostart'] else ''}")
         menu.entryconfig(2, state='normal')
     else:
-        menu.entryconfig(2, label=t('autostart'))
+        menu.entryconfig(2, label=lang_text('autostart'))
         menu.entryconfig(2, state='disabled')
-    menu.entryconfig(3, label=f"{t('fixed_position')} {'✔' if config['fixed_position'] else ''}")
-    menu.entryconfig(4, label=t("language"))
-    lang_menu.entryconfig(0, label=t("lang_uk"))
-    lang_menu.entryconfig(1, label=t("lang_en"))
-    lang_menu.entryconfig(2, label=t("lang_ru"))
-    menu.entryconfig(5, label=t("reset"))
-    menu.entryconfig(7, label=t("github_page"))
-    menu.entryconfig(8, label=t("support_developer"))
-    menu.entryconfig(10, label=t("exit"))
-    menu.entryconfig(12, label=f"{t('version')} {APP_VERSION}")
+    menu.entryconfig(3, label=f"{lang_text('fixed_position')} {'✔' if config['fixed_position'] else ''}")
+    menu.entryconfig(4, label=lang_text("language"))
+    lang_menu.entryconfig(0, label=lang_text("lang_uk"))
+    lang_menu.entryconfig(1, label=lang_text("lang_en"))
+    lang_menu.entryconfig(2, label=lang_text("lang_ru"))
+    menu.entryconfig(5, label=lang_text("reset"))
+    menu.entryconfig(7, label=lang_text("github_page"))
+    menu.entryconfig(8, label=lang_text("support_developer"))
+    menu.entryconfig(10, label=lang_text("exit"))
+    menu.entryconfig(12, label=f"{lang_text('version')} {APP_VERSION}")
 
 
 # === GUI ===
@@ -272,27 +272,27 @@ label.bind("<ButtonPress-1>", start_move)
 label.bind("<B1-Motion>", do_move)
 
 menu = tk.Menu(root, tearoff=0)
-menu.add_command(label=t("always_on_top"), command=toggle_topmost)
-menu.add_command(label=t("dark_theme"), command=toggle_theme)
+menu.add_command(label=lang_text("always_on_top"), command=toggle_topmost)
+menu.add_command(label=lang_text("dark_theme"), command=toggle_theme)
 if platform.system() == "Windows":
-    menu.add_command(label=t("autostart"), command=toggle_autostart)
+    menu.add_command(label=lang_text("autostart"), command=toggle_autostart)
 else:
-    menu.add_command(label=t("autostart"), command=None, state='disabled')
-menu.add_command(label=t("fixed_position"), command=toggle_fixed_position)
+    menu.add_command(label=lang_text("autostart"), command=None, state='disabled')
+menu.add_command(label=lang_text("fixed_position"), command=toggle_fixed_position)
 
 lang_menu = tk.Menu(menu, tearoff=0)
-lang_menu.add_command(label=t("lang_uk"), command=lambda: set_language("uk"))
-lang_menu.add_command(label=t("lang_en"), command=lambda: set_language("en"))
-lang_menu.add_command(label=t("lang_ru"), command=lambda: set_language("ru"))
-menu.add_cascade(label=t("language"), menu=lang_menu)
-menu.add_command(label=t("reset"), command=reset_to_defaults)
+lang_menu.add_command(label=lang_text("lang_uk"), command=lambda: set_language("uk"))
+lang_menu.add_command(label=lang_text("lang_en"), command=lambda: set_language("en"))
+lang_menu.add_command(label=lang_text("lang_ru"), command=lambda: set_language("ru"))
+menu.add_cascade(label=lang_text("language"), menu=lang_menu)
+menu.add_command(label=lang_text("reset"), command=reset_to_defaults)
 menu.add_separator()
-menu.add_command(label=t("github_page"), command=lambda: open_link("github"))
-menu.add_command(label=t("support_developer"), command=lambda: open_link("donate"))
+menu.add_command(label=lang_text("github_page"), command=lambda: open_link("github"))
+menu.add_command(label=lang_text("support_developer"), command=lambda: open_link("donate"))
 menu.add_separator()
-menu.add_command(label=t("exit"), command=safe_exit)
+menu.add_command(label=lang_text("exit"), command=safe_exit)
 menu.add_separator()
-menu.add_command(label=f"{t('version')} {APP_VERSION}", state="disabled")
+menu.add_command(label=f"{lang_text('version')} {APP_VERSION}", state="disabled")
 
 
 def show_menu(event):
