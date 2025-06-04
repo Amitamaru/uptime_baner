@@ -7,8 +7,10 @@ import json
 import os
 import sys
 import platform
+import webbrowser
 
 APP_NAME = "Uptime_Banner"
+APP_VERSION = "1.3.1"
 
 BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
@@ -34,6 +36,14 @@ config = {
 with open(os.path.join(BASE_DIR, "locales.json"), "r", encoding="utf-8") as f:
     translations = json.load(f)
 
+# === Links ===
+def load_links(path="links.json"):
+    try:
+        with open(path, "r", encoding="utf-8") as file:
+            return json.load(file)
+    except Exception as e:
+        print(f"[!] Failed to load links: {e}")
+        return {}
 
 def t(key):
     lang = config.get("language", "en")
@@ -195,6 +205,17 @@ def safe_exit():
         print(f"Error during cleanup: {e}")
     root.destroy()
 
+links = load_links()
+
+def open_donation_link():
+    url = links.get("donate")
+    if url:
+        webbrowser.open(url)
+
+def open_github_link():
+    url = links.get("github")
+    if url:
+        webbrowser.open(url)
 
 def update_menu():
     menu.entryconfig(0, label=f"{t('always_on_top')} {'✔' if config['topmost'] else ''}")

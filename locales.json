@@ -13,7 +13,10 @@
     "year": "рік(и)",
     "day": "дн",
     "hour": "год",
-    "minute": "хв"
+    "minute": "хв",
+    "version": "Версфя",
+    "github_page": "\uD83D\uDD17 Сторінка Github",
+    "donate_page": "\uD83D\uDC96 Підтримати розробника"
   },
   "en": {
     "always_on_top": "Always on top",
@@ -29,7 +32,10 @@
     "year": "year(s)",
     "day": "d",
     "hour": "h",
-    "minute": "min"
+    "minute": "min",
+    "version": "",
+    "github_page": "\uD83D\uDD17 Github page",
+    "donate_page": "\uD83D\uDC96 Support developer"
   },
   "ru": {
     "always_on_top": "Всегда поверх окон",
@@ -45,6 +51,9 @@
     "year": "год(а/лет)",
     "day": "дн",
     "hour": "ч",
-    "minute": "мин"
+    "minute": "мин",
+    "version": "Версия",
+    "github_page": "\uD83D\uDD17 Страница Github",
+    "donate_page": "\uD83D\uDC96 Поддержать разработчика"
   }
 }
