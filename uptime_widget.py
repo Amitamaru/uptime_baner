@@ -9,7 +9,16 @@ import sys
 import platform
 import webbrowser
 
-with open("metadata.json", "r", encoding="utf-8") as meta_file:
+def resource_path(filename):
+    """
+    Get absolute path to resource (works for dev and for PyInstaller .exe)
+    """
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, filename)
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, filename)
+
+with open(resource_path("metadata.json"), "r", encoding="utf-8") as meta_file:
     metadata = json.load(meta_file)
 
 APP_NAME = metadata.get("APP_NAME", "uptime_widget")
@@ -35,14 +44,7 @@ config = {
     "language": "en"
 }
 
-def resource_path(filename):
-    """
-    Get absolute path to resource (works for dev and for PyInstaller .exe)
-    """
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, filename)
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(base_path, filename)
+
 
 
 # === Localization ===
