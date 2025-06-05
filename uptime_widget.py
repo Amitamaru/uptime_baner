@@ -9,8 +9,11 @@ import sys
 import platform
 import webbrowser
 
-APP_NAME = "uptime_widget"
-APP_VERSION = "1.3.2"
+with open("metadata.json", "r", encoding="utf-8") as meta_file:
+    metadata = json.load(meta_file)
+
+APP_NAME = metadata.get("APP_NAME", "uptime_widget")
+APP_VERSION = metadata.get("APP_VERSION", "1.0.0")
 
 BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
