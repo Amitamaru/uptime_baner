@@ -14,7 +14,7 @@ with open("metadata.json", "w", encoding="utf-8") as f:
     json.dump(metadata, f, indent=2)
 
 # Формуємо назву exe
-output_name = f"{metadata['APP_NAME'].replace('_', ' ')} v.{metadata['APP_VERSION']}.exe"
+output_name = f"{metadata['APP_NAME'].replace('_', ' ')} v{metadata['APP_VERSION']}.exe"
 
 # Збірка
 subprocess.run([
