@@ -35,14 +35,14 @@ All settings are stored in a local `config.json` file in the same directory:
   "autostart": false,
   "fixed_position": false,
   "window_position": "+100+100",
-  "language": "uk"
+  "language": "en"
 }
 ```
 
 
 ## 🛠 How to Create `.exe` (Windows)
 
-Base current version is created in "dist" folder, and you can use it
+
 
 To convert the Python script into a `.exe` file, use PyInstaller:
 
@@ -57,43 +57,9 @@ To convert the Python script into a `.exe` file, use PyInstaller:
 2. Navigate to the script directory and run:
 
    ```
-   pyinstaller --noconsole --onefile uptime_widget.py
+   Run build.py
    ```
 
-   - `--onefile`: creates a single `.exe` file
-   - `--noconsole`: hides the black console window (for GUI apps)
-
-3. After execution, these folders will be created:
-   - `dist/` — contains the final `uptime_baner.exe` file
-   - `build/` — temporary build files
-   - `uptime_baner.spec` — build config (can be reused)
-
-4. You can now run `dist/uptime_baner.exe`. A `config.json` file will be created next to it on first launch.
-
-### Optional: Add icon
-
-To include your own `.ico` file as icon:
-
-```
-pyinstaller --noconsole --onefile --icon=my_icon.ico uptime_baner.py
-```
-
-## 🏁 How to Run
-
-1. Ensure Python is installed:
-   ```
-   python --version
-   ```
-
-2. Install dependencies:
-   ```
-   pip install psutil
-   ```
-
-3. Launch the script:
-   ```
-   python uptime_baner.py
-   ```
 
 ## 🧹 Reset Settings
 
