@@ -10,7 +10,7 @@ import platform
 import webbrowser
 
 APP_NAME = "uptime_widget"
-APP_VERSION = "1.3.1"
+APP_VERSION = "1.3.2"
 
 BASE_DIR = os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE_DIR, "config.json")
@@ -143,9 +143,32 @@ def update_label():
 def apply_theme():
     bg = "#222" if config["dark_theme"] else "#f0f0f0"
     fg = "white" if config["dark_theme"] else "black"
+    active_bg = "#444" if config["dark_theme"] else "#ddd"
+    active_fg = "white" if config["dark_theme"] else "black"
     label.config(bg=bg, fg=fg)
     root.config(bg=bg)
 
+    menu.config(bg=bg, fg=fg,
+                activebackground=active_bg,
+                activeforeground=active_fg)
+
+    # Оновлення всіх пунктів меню (можна опустити, але буде повна відповідність)
+    for i in range(menu.index("end") + 1):
+        try:
+            menu.entryconfig(i, background=bg, foreground=fg,
+                             activebackground=active_bg, activeforeground=active_fg)
+        except:
+            pass  # Пропускаємо сепаратори
+
+    lang_menu.config(bg=bg, fg=fg,
+                     activebackground=active_bg,
+                     activeforeground=active_fg)
+    for i in range(lang_menu.index("end") + 1):
+        try:
+            lang_menu.entryconfig(i, background=bg, foreground=fg,
+                                  activebackground=active_bg, activeforeground=active_fg)
+        except:
+            pass
 
 # === Menu functions ===
 def toggle_topmost():
@@ -251,13 +274,17 @@ root = tk.Tk()
 root.title("Uptime Widget")
 root.overrideredirect(True)
 root.attributes("-topmost", config["topmost"])
-root.attributes("-alpha", 0.9)
+root.attributes("-alpha", 0.85)
 root.geometry(config.get("window_position", "+100+100"))
 
-label = tk.Label(root, text="", font=("Segoe UI", 14), padx=10, pady=5)
-label.pack()
+# Рамка з темнішим фоном
+frame = tk.Frame(root, bg="#1a1a1a", padx=1, pady=1)  # колір рамки
+frame.pack()
 
-apply_theme()
+# Сам віджет
+label = tk.Label(frame, text="", font=("Segoe UI", 14),
+                 padx=10, pady=5, bg="#222", fg="white")  # або інші кольори
+label.pack()
 
 
 def start_move(event):
@@ -304,6 +331,7 @@ menu.add_command(label=lang_text("exit"), command=safe_exit)
 menu.add_separator()
 menu.add_command(label=f"{lang_text('version')} {APP_VERSION}", state="disabled")
 
+apply_theme()
 
 def show_menu(event):
     if not str(menu) or not menu.winfo_exists():
