@@ -6,7 +6,7 @@ import shutil
 # Єдине джерело правди
 metadata = {
     "APP_NAME": "uptime_widget",
-    "APP_VERSION": "1.3.2"
+    "APP_VERSION": "1.3.3"
 }
 
 # Записуємо у metadata.json
