@@ -148,32 +148,9 @@ def update_label():
 def apply_theme():
     bg = "#222" if config["dark_theme"] else "#f0f0f0"
     fg = "white" if config["dark_theme"] else "black"
-    active_bg = "#444" if config["dark_theme"] else "#ddd"
-    active_fg = "white" if config["dark_theme"] else "black"
     label.config(bg=bg, fg=fg)
     root.config(bg=bg)
 
-    menu.config(bg=bg, fg=fg,
-                activebackground=active_bg,
-                activeforeground=active_fg)
-
-    # Оновлення всіх пунктів меню (можна опустити, але буде повна відповідність)
-    for i in range(menu.index("end") + 1):
-        try:
-            menu.entryconfig(i, background=bg, foreground=fg,
-                             activebackground=active_bg, activeforeground=active_fg)
-        except:
-            pass  # Пропускаємо сепаратори
-
-    lang_menu.config(bg=bg, fg=fg,
-                     activebackground=active_bg,
-                     activeforeground=active_fg)
-    for i in range(lang_menu.index("end") + 1):
-        try:
-            lang_menu.entryconfig(i, background=bg, foreground=fg,
-                                  activebackground=active_bg, activeforeground=active_fg)
-        except:
-            pass
 
 # === Menu functions ===
 def toggle_topmost():
